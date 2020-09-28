@@ -1,0 +1,18 @@
+{
+  "name": "electronbasic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron --remote-debugging-port=9223 ."
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^10.1.2"
+  },
+  "dependencies": {
+    "realm": "^10.0.0-beta.13"
+  }
+}

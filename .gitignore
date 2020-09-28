@@ -1,0 +1,6 @@
+/node_modules/
+/mongodb-realm/
+/myrealm.realm.management/
+myrealm.realm
+myrealm.realm.lock
+myrealm.realm.note
