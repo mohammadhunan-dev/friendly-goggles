@@ -2,6 +2,8 @@ const { ipcRenderer } = require("electron");
 const Realm = require("realm");
 const ObjectId = require("bson").ObjectId;
 
+console.log("renderer: hello from renderer");
+
 async function rendererRealmStuff() {
   const app = new Realm.App({ id: "tutsbrawl-qfxxj" });
 
@@ -29,7 +31,20 @@ async function rendererRealmStuff() {
   const realm = new Realm(config);
 
   const taskList = realm.objects("Task");
+  taskList.addListener(() => {
+    console.log("NEW TASK!!!");
+  });
   console.log(`Renderer: Realm contains ${taskList.length} 'Task' objects.`);
+
+  const htmlList = document.getElementById("tasks");
+
+  taskList.forEach((task) => {
+    console.log("task:", task);
+    var listItem = document.createElement("LI");
+    var itemText = document.createTextNode(task.name);
+    listItem.appendChild(itemText);
+    htmlList.appendChild(listItem);
+  });
 
   realm.write(() => {
     realm.create("Task", {
@@ -44,7 +59,22 @@ async function rendererRealmStuff() {
   );
   console.log(`Renderer: Sending a request for sync to main`);
   ipcRenderer.send("asynchronous-message", "sync");
-}
 
-console.log("renderer: hello from renderer");
-rendererRealmStuff();
+  return realm;
+}
+const realmAsAPromise = rendererRealmStuff();
+
+function createTask() {
+  const inputTxt = document.getElementById("taskname").value;
+  realmAsAPromise.then((realm) => {
+    realm.write(() => {
+      realm.create("Task", {
+        _id: new ObjectId(),
+        name: inputTxt,
+        status: "OPEN",
+      });
+    });
+  });
+  console.log(`Renderer: Sending a request for sync to main`);
+  ipcRenderer.send("asynchronous-message", "sync");
+}
